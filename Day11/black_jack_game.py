@@ -77,8 +77,8 @@ def computer_draw(user):
         draw_or_not = random.choice(chance)
         if draw_or_not == 1:
             print("Computer is drawing a card")
-            deal_card(computer)
-            total = calculate_scores(computer)
+            deal_card(user)
+            total = calculate_scores(user)
 
 
     return user
@@ -93,101 +93,109 @@ Test
 
 
 
+def game():
+    answer = input("Do you want to play the game of blackjack? 'y' for yes and 'n' for no: ")
+    while answer == 'y':
+        print(art.logo)
+        computer = []
+        human = []
+        computer_won = False
+        human_won = False
+        isTie = False
 
-answer = input("Do you want to play the game of blackjack? 'y' for yes and 'n' for no: ")
-while answer == 'y':
-    print(art.logo)
-    computer = []
-    human = []
-    computer_won = False
-    human_won = False
-    isTie = False
-
-    #starting the game, we deal two cards to human 
-    deal_card(human)
-    deal_card(human)
-    ace_or_one(human)
-    human_score = calculate_scores(human)
-    print(f"Your cards: {human},current score: {human_score}")
-   
-        
-    # deal two cards to computer 
-    deal_card(computer)
-    deal_card(computer)
-    ace_or_one(computer)
-    computer_score = calculate_scores(computer)
-    computer_first_card = reveal_first_card(computer)
-    print(f"Computer's first card {computer_first_card}")
-
-
-    
-    get_card = input("Type 'y' to get another card, type 'n' to pass: ")
-    while get_card == 'y':
+        #starting the game, we deal two cards to human 
+        deal_card(human)
         deal_card(human)
         ace_or_one(human)
         human_score = calculate_scores(human)
-        print(f" Your cards are {human}, and current score is {human_score}")
-        computer_draw(computer)
+        print(f"Your cards: {human},current score: {human_score}")
+    
+            
+        # deal two cards to computer 
+        deal_card(computer)
+        deal_card(computer)
         ace_or_one(computer)
         computer_score = calculate_scores(computer)
         computer_first_card = reveal_first_card(computer)
         print(f"Computer's first card {computer_first_card}")
 
-        if detect_black_jack(computer):
+        human_has_black_jack = detect_black_jack(human)
+        computer_has_black_jack = detect_black_jack(computer)
+        
+        if human_has_black_jack and not computer_has_black_jack:
+            human_won = True
+            print("You have won! Computer went over")
+            print(f"Your final hand is {human}, and final score is {human_score}")
+            print(f"computer's final hand is {computer}, final score is {computer_score}")
+            answer = input("Do you want to play the game of blackjack? 'y' for yes and 'n' for no: ")
+            continue
+        elif human_has_black_jack and computer_has_black_jack:
+            isTie = True
+            print("It's a Tie because you both have black jack")
+            print(f"Your final hand is {human}, and final score is {human_score}")
+            print(f"computer's final hand is {computer}, final score is {computer_score}")
+            answer = input("Do you want to play the game of blackjack? 'y' for yes and 'n' for no: ")
+            continue
+        elif computer_has_black_jack:
             computer_won = True
-            break
+            print("You lost.")
+            print(f"Your final hand is {human}, and final score is {human_score}")
+            print(f"computer's final hand is {computer}, final score is {computer_score}")
+            answer = input("Do you want to play the game of blackjack? 'y' for yes and 'n' for no: ")
+            continue
+        
+        get_card = input("Type 'y' to get another card, type 'n' to pass: ")
+        while get_card == 'y':
+            deal_card(human)
+            ace_or_one(human)
+            human_score = calculate_scores(human)
+            print(f" Your cards are {human}, and current score is {human_score}")
+            computer_draw(computer)
+            ace_or_one(computer)
+            computer_score = calculate_scores(computer)
+            computer_first_card = reveal_first_card(computer)
+            print(f"Computer's first card {computer_first_card}")
 
-        if detect_black_jack(human):
-            if not detect_black_jack(computer):
+            if (human_score > 21 and computer_score > 21) or (human_score == computer_score):
+                isTie = True
+                break
+            elif human_score > 21 or computer_score == 21:
+                computer_won = True
+                break
+            elif computer_score > 21 or human_score == 21:
                 human_won = True
                 break
-        
+            get_card = input("Type 'y' to get another card, type 'n' to pass: ")
 
+        if get_card == "n":
+            computer_draw(computer)
+            ace_or_one(computer)
+            computer_score = calculate_scores(computer)
+            
+            if computer_score > 21 or human_score == 21 or human_score > computer_score:
+                human_won = True
+            elif computer_score > human_score or computer_score == 21:
+                computer_won = True
+            elif (human_score > 21 and computer_score > 21) or (human_score == computer_score):
+                isTie = True
+        
+        if isTie:
+            print("It's a tie. You both went over")
+            print(f"Your final hand is {human}, and final score is {human_score}")
+            print(f"computer's final hand is {computer}, final score is {computer_score}")
+        elif computer_won:
+            print("You lost.")
+            print(f"Your final hand is {human}, and final score is {human_score}")
+            print(f"computer's final hand is {computer}, final score is {computer_score}")
+        elif human_won:
+            print("You have won! Computer went over")
+            print(f"Your final hand is {human}, and final score is {human_score}")
+            print(f"computer's final hand is {computer}, final score is {computer_score}")
+            
+        
+        answer = input("Do you want to play the game of blackjack? 'y' for yes and 'n' for no: ")
 
-        if (human_score > 21 and computer_score > 21) or (human_score == computer_score):
-            isTie = True
-            break
-        elif human_score > 21 or computer_score == 21:
-            computer_won = True
-            break
-        elif computer_score > 21 or human_score == 21:
-            human_won = True
-            break
-        get_card = input("Type 'y' to get another card, type 'n' to pass: ")
-
-    if get_card == "n":
-        computer_draw(computer)
-        ace_or_one(computer)
-        computer_score = calculate_scores(computer)
-        
-        if computer_score > 21 or human_score == 21 or human_score > computer_score:
-            human_won = True
-        elif computer_score > human_score or computer_score == 21:
-            computer_won = True
-        elif (human_score > 21 and computer_score > 21) or (human_score == computer_score):
-            isTie = True
-    
-    if isTie:
-        print("It's a tie. You both went over")
-        print(f"Your final hand is {human}, and final score is {human_score}")
-        print(f"computer's final hand is {computer}, final score is {computer_score}")
-        
-        
-    elif computer_won:
-        print("You lost.")
-        print(f"Your final hand is {human}, and final score is {human_score}")
-        print(f"computer's final hand is {computer}, final score is {computer_score}")
-        
-        
-
-    elif human_won:
-        print("You have won! Computer went over")
-        print(f"Your final hand is {human}, and final score is {human_score}")
-        print(f"computer's final hand is {computer}, final score is {computer_score}")
-        
-    
-    answer = input("Do you want to play the game of blackjack? 'y' for yes and 'n' for no: ")
-
+game()
         
 
     
